@@ -2,7 +2,7 @@
 Bot que fala quem entra e quem sai do voice do discord.
 
 # Criando a aplicação e adicionando o bot ao servidor
-- Acesse o site [https://discord.com/developers/applications](Discord Developers) e faça o login com sua conta.
+- Acesse o site (https://discord.com/developers/applications)[Discord Developers] e faça o login com sua conta.
 - Crie uma aplicação clicando no botão "New Application".
 - Após criar a aplicação, vá em bot no menu do lado esquerdo.
 - Copie o token e cole no arquivo .env após o =.
