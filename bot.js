@@ -1,9 +1,9 @@
 require('dotenv').config()
 
-const Discord = require('discord.js');
-const client = new Discord.Client();
-
-// https://discord.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=8
+const Discord = require('discord.js')
+const client = new Discord.Client()
+const ytdl = require('ytdl-core')
+const discordTTS = require('discord-tts');
 
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'x9 das call', type: "LISTENING" }, status: 'online' })
@@ -13,11 +13,11 @@ client.login(process.env.BOT_TOKEN)
 
 client.on("message", async (msg) => {
 
-    if (msg.author.bot) return;
+    if (msg.author.bot) return
 
     if (msg.content == "!voicejoin") {
         if (!msg.member.voice.channel) {
-            msg.channel.send("Must be in a voice channel!");
+            msg.channel.send("Must be in a voice channel!")
         }
         else {
             msg.member.voice.channel.join()
@@ -27,6 +27,16 @@ client.on("message", async (msg) => {
     if (msg.content == "!voiceleave") {
         if (msg.member.voice.channel !== null) {
             msg.member.voice.channel.leave()
+        }
+    }
+
+    if (msg.content.includes("!voiceplay ")) {
+        if (msg.member.voice.channel) {
+            const connection = await msg.member.voice.channel.join()
+            playFileYoutube(connection, msg.content.substring(9))
+        }
+        else {
+            msg.channel.send("Must be in a voice channel!")
         }
     }
 
@@ -41,7 +51,7 @@ client.on("message", async (msg) => {
         if (msg.member.voice.channel) {
             const connection = await msg.member.voice.channel.join()
             return new Promise((resolve, reject) => {
-                const dispatcher = connection.play("https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURI(msg.content.substring(4)) + "&tl=pt_BR&total=1&idx=0&textlen=3&client=tw-ob&prev=input");
+                const dispatcher = connection.play(discordTTS.getVoiceStream(msg.content.substring(4), { lang: "pt" }));
                 dispatcher.setVolume(1)
                 dispatcher.on('start', () => {
                 })
@@ -68,10 +78,9 @@ client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
             var name_user = member.nickname;
             if (!name_user)
                 name_user = member.user.username;
-            console.log(`${name_user} entrou no canal de voz!`);
             const connection = await member.voice.channel.join()
             return new Promise((resolve, reject) => {
-                const dispatcher = connection.play("https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURI(name_user) + " entrou no canal de voz!&tl=pt_BR&total=1&idx=0&textlen=3&client=tw-ob&prev=input");
+                const dispatcher = connection.play(discordTTS.getVoiceStream(`${name_user} entrou na cau!`, { lang: "pt" }));
                 dispatcher.setVolume(1)
                 dispatcher.on('start', () => {
                 })
@@ -91,9 +100,8 @@ client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
         var name_user = member.nickname;
         if (!name_user)
             name_user = member.user.username;
-        console.log(`${name_user} saiu do canal de voz!`);
         return new Promise((resolve, reject) => {
-            const dispatcher = connection.play("https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURI(name_user) + " saiu do canal de voz!&tl=pt_BR&total=1&idx=0&textlen=3&client=tw-ob&prev=input");
+            const dispatcher = connection.play(discordTTS.getVoiceStream(`${name_user} saiu da cau!`, { lang: "pt" }));
             dispatcher.setVolume(1)
             dispatcher.on('start', () => {
             })
@@ -107,3 +115,39 @@ client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
         })
     }
 })
+
+async function playFile(connection, filePath) {
+    return new Promise((resolve, reject) => {
+        const dispatcher = connection.play(filePath)
+        dispatcher.setVolume(1)
+        dispatcher.on('start', () => {
+        })
+        dispatcher.on('end', () => {
+            resolve()
+        })
+        dispatcher.on('error', (error) => {
+            console.error(error)
+            reject(error)
+        })
+    })
+}
+
+async function playFileYoutube(connection, url) {
+    return new Promise((resolve, reject) => {
+        try {
+            const dispatcher = connection.play(ytdl(url, { quality: 'highestaudio' }));
+            dispatcher.setVolume(1)
+            dispatcher.on('start', () => {
+            })
+            dispatcher.on('end', () => {
+                resolve()
+            })
+            dispatcher.on('error', (error) => {
+                console.error(error)
+                reject(error)
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    })
+}
