@@ -1,18 +1,4 @@
-# VoiceWelcomeDiscordBot
-Bot que fala quem entra e quem sai do voice do discord.
+# voicebot
+This is a Discord bot implemented with Node.js that uses the Google Cloud Speech-to-Text API to implement voice commands in a Discord server. The bot also includes miscellaneous commands related to audio streaming, such as the ability to play the audio of a Youtube video or audio file in a voice channel.
 
-# Criando a aplicação e adicionando o bot ao servidor
-- Acesse o site https://discord.com/developers/applications e faça o login com sua conta.
-- Crie uma aplicação clicando no botão "New Application".
-- Após criar a aplicação, vá em bot no menu do lado esquerdo.
-- Copie o token e cole no arquivo .env após o =.
-- Vá em General Information no menu do lado esquerdo e copie o client id e use o link abaixo para adicionar ao seu servidor
-- https://discord.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=8
-
-# Comandos
-- !voicejoin - Conecta no voice que você está
-- !voiceleave - Sai do voice
-- !voicestop - Para de falar
-- !say %texto% - Fala o texto
-
-
+The bot requires a valid google-credentials.json file and this file must be referenced in the appropriate environment variable. An in depth explanation of how to do this can be found [here.](https://cloud.google.com/speech-to-text/docs/libraries#cloud-console)

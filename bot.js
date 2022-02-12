@@ -1,73 +1,43 @@
 require('dotenv').config()
-
+const discordTTS = require('discord-tts');
 const Discord = require('discord.js')
 const client = new Discord.Client()
-const ytdl = require('ytdl-core')
-const discordTTS = require('discord-tts');
+const { readdirSync } = require('fs')
+const cmdFiles = readdirSync('./commands/')
+const Enmap = require('enmap')
+client.commands = new Enmap()
+client.startTime = Date.now()
 
-client.on('ready', () => {
-    client.user.setPresence({ activity: { name: 'x9 das call', type: "LISTENING" }, status: 'online' })
+console.log('\u001b[33m [INFO]', `\u001b[32mIniciando o CyanBot \u001b[31mv1.0`)
+console.log('\u001b[33m [INFO]', `\u001b[32mCarregando o total de \u001b[31m${cmdFiles.length} \u001b[32mcomandos.`)
+
+cmdFiles.forEach(f => {
+    try {
+        const props = require(`./commands/${f}`)
+        if (f.split('.').slice(-1)[0] !== 'js') return;
+        //console.log('\u001b[33m [INFO]', `\u001b[32mCarregando o comando \u001b[0m\u001b[31m${props.help.name}\u001b[0m`)
+        if (props.init) props.init(client)
+        client.commands.set(props.help.name, props)
+        if (props.help.aliases) {
+            props.alias = true
+            props.help.aliases.forEach(alias => client.commands.set(alias, props))
+        }
+    } catch (e) {
+        console.log('\u001b[31m [ERRO]', `\u001b[32mImpossível carregar o ocmando \u001b[0m\u001b[31m${f}: ${e}\u001b[0m`)
+    }
 })
 
 client.login(process.env.BOT_TOKEN)
 
 client.on("message", async (msg) => {
-
-    if (msg.author.bot) return
-
-    if (msg.content == "!voicejoin") {
-        if (!msg.member.voice.channel) {
-            msg.channel.send("Must be in a voice channel!")
-        }
-        else {
-            msg.member.voice.channel.join()
-        }
-    }
-
-    if (msg.content == "!voiceleave") {
-        if (msg.member.voice.channel !== null) {
-            msg.member.voice.channel.leave()
-        }
-    }
-
-    if (msg.content.includes("!voiceplay ")) {
-        if (msg.member.voice.channel) {
-            const connection = await msg.member.voice.channel.join()
-            playFileYoutube(connection, msg.content.substring(9))
-        }
-        else {
-            msg.channel.send("Must be in a voice channel!")
-        }
-    }
-
-    if (msg.content.includes("!voicestop")) {
-        if (msg.member.voice.channel) {
-            const connection = await msg.member.voice.channel.join()
-            await playFile(connection, 'quiet.mp3')
-        }
-    }
-
-    if (msg.content.includes("!say ")) {
-        if (msg.member.voice.channel) {
-            const connection = await msg.member.voice.channel.join()
-            return new Promise((resolve, reject) => {
-                const dispatcher = connection.play(discordTTS.getVoiceStream(msg.content.substring(4), { lang: "pt" }));
-                dispatcher.setVolume(1)
-                dispatcher.on('start', () => {
-                })
-                dispatcher.on('end', () => {
-                    resolve()
-                })
-                dispatcher.on('error', (error) => {
-                    console.error(error)
-                    reject(error)
-                })
-            })
-        }
-        else {
-            msg.channel.send("Must be in a voice channel!")
-        }
-    }
+    if (msg.author.bot) return;
+    if (msg.content.indexOf(`${process.env.PREFIX}`) !== 0) return;
+    const args = msg.content.slice(`${process.env.PREFIX}`.length).trim().split(/ +/g)
+    const command = args.shift().toLowerCase();
+    const cmd = client.commands.get(command);
+    if (!cmd) return;
+    if (cmd.conf.onlyguilds && !msg.guild) return;
+    cmd.run(client, msg, args);
 })
 
 client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
@@ -116,38 +86,8 @@ client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
     }
 })
 
-async function playFile(connection, filePath) {
-    return new Promise((resolve, reject) => {
-        const dispatcher = connection.play(filePath)
-        dispatcher.setVolume(1)
-        dispatcher.on('start', () => {
-        })
-        dispatcher.on('end', () => {
-            resolve()
-        })
-        dispatcher.on('error', (error) => {
-            console.error(error)
-            reject(error)
-        })
-    })
-}
 
-async function playFileYoutube(connection, url) {
-    return new Promise((resolve, reject) => {
-        try {
-            const dispatcher = connection.play(ytdl(url, { quality: 'highestaudio' }));
-            dispatcher.setVolume(1)
-            dispatcher.on('start', () => {
-            })
-            dispatcher.on('end', () => {
-                resolve()
-            })
-            dispatcher.on('error', (error) => {
-                console.error(error)
-                reject(error)
-            })
-        } catch (e) {
-            console.log(e);
-        }
-    })
-}
+client.on('ready', () => {
+    client.user.setPresence({ activity: { name: 'x9 das call', type: "LISTENING" }, status: 'online' })
+    console.log('\u001b[33m [INFO]', `\u001b[32mBot iniciado com sucesso! \u001b[0m\u001b`)
+})

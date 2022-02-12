@@ -1,17 +1,30 @@
 {
-  "name": "ttl-welcome",
+  "name": "rb-voicebot",
   "version": "1.0.0",
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "devStart": "nodemon bot.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.7.0",
+    "@google-cloud/speech": "^4.1.5",
+    "canvas": "^2.9.0",
+    "config": "^3.3.3",
+    "discord-tts": "^1.2.1",
     "discord.js": "^12.5.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "enmap": "^5.8.8",
+    "ffmpeg-static": "^4.2.7",
+    "fs": "^0.0.1-security",
+    "moment": "^2.29.1",
+    "nekos.life": "^2.0.9",
+    "ytdl-core": "^4.10.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
 }
