@@ -1,3 +1,4 @@
+/*
 const Discord = require('discord.js')
 const client = require('nekos.life');
 const neko = new client();
@@ -24,4 +25,4 @@ module.exports = {
     description: 'Abraça um usuário.',
     usage: 'abracar'
   }
-}
+}*/

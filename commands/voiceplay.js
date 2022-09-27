@@ -1,4 +1,4 @@
-const discordTTS = require('discord-tts');
+/*const discordTTS = require('discord-tts');
 const ytdl = require('ytdl-core')
 
 module.exports = {
@@ -38,4 +38,4 @@ async function playFileYoutube(connection, url) {
       console.log(e);
     }
   })
-}
+}*/

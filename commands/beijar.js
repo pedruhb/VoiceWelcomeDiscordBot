@@ -1,4 +1,4 @@
-const Discord = require('discord.js')
+/*const Discord = require('discord.js')
 const client = require('nekos.life');
 const neko = new client();
 
@@ -23,4 +23,4 @@ module.exports = {
     description: 'Beija um usuário.',
     usage: 'beijar'
   }
-}
+}*/
