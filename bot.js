@@ -50,7 +50,7 @@ client.on('voiceStateUpdate', async (oldPresence, newPresence) => {
                 name_user = member.user.username;
             const connection = await member.voice.channel.join()
             return new Promise((resolve, reject) => {
-                const dispatcher = connection.play(discordTTS.getVoiceStream(`rôu rôu rôu, ${name_user} entrou na cau!`, { lang: "pt" }));
+                const dispatcher = connection.play(discordTTS.getVoiceStream(`${name_user} entrou na cau!`, { lang: "pt" }));
                 dispatcher.setVolume(1)
                 dispatcher.on('start', () => {
                 })
